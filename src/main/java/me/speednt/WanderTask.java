@@ -21,6 +21,14 @@ public class WanderTask extends BukkitRunnable {
             return;
         }
 
+        if (RhymixNPC.isFighting()) {
+            return;
+        }
+
+        if (RhymixAllyManager.getAllyUUID() != null) {
+            return;
+        }
+
         var npc = RhymixNPC.get();
 
         Location current = npc.getLocation();

@@ -5,6 +5,8 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Mannequin;
 
@@ -34,8 +36,19 @@ public final class RhymixNPC {
 
     private static final Random RANDOM = new Random();
     private static WanderTask wanderTask;
+    private RhymixCombatListener combatListener;
 
     private RhymixNPC() {}
+
+    private static boolean fighting = false;
+
+    public static boolean isFighting() {
+        return fighting;
+    }
+
+    public static void setFighting(boolean value) {
+        fighting = value;
+    }
 
     public static boolean exists() {
         return mannequin != null && mannequin.isValid();
@@ -68,12 +81,28 @@ public final class RhymixNPC {
         );
 
         Bukkit.broadcast(
-                Component.text("RhymixNPC has joined the game", NamedTextColor.YELLOW)
+                Component.text("RhymixGPT has joined the game", NamedTextColor.YELLOW)
         );
+
+        RhymixDiscordBridge.sendMessage("*RhymixGPT has joined the game*");
 
         mannequin.setPersistent(true);
         mannequin.setRemoveWhenFarAway(false);
+
+        AttributeInstance maxHealth =
+                mannequin.getAttribute(Attribute.MAX_HEALTH);
+
+        if (maxHealth != null) {
+            maxHealth.setBaseValue(500.0);
+            mannequin.setHealth(500.0);
+        }
+
         wanderTask = new WanderTask();
+        new RhymixMobTargetTask().runTaskTimer(
+                RhymixPlugin.get(),
+                20L,
+                20L
+        );
         wanderTask.start();
     }
 
@@ -91,6 +120,7 @@ public final class RhymixNPC {
                                 .append(Component.text(message, NamedTextColor.WHITE))
                 )
         );
+        RhymixDiscordBridge.sendMessage("<Rhymix> " + message);
     }
 
     public static void teleport(Location location) {
@@ -100,6 +130,11 @@ public final class RhymixNPC {
         }
 
         mannequin.teleport(location);
+        Bukkit.broadcast(
+                Component.text("<Rhymix> ", NamedTextColor.YELLOW)
+                        .append(Component.text("Teleporting to " + mannequin.getLocation().getX() + ", " + mannequin.getLocation().getY() + ", " + mannequin.getLocation().getZ(), NamedTextColor.WHITE))
+        );
+        RhymixDiscordBridge.sendMessage("<Rhymix> Teleporting to " + mannequin.getLocation().getX() + ", " + mannequin.getLocation().getY() + ", " + mannequin.getLocation().getZ());
     }
 
     public static void remove() {
@@ -112,6 +147,9 @@ public final class RhymixNPC {
             wanderTask.cancel();
             wanderTask = null;
         }
+
+        RhymixCombatListener.stopCombat();
+        RhymixAllyManager.clearAlly();
 
         mannequin.remove();
         mannequin = null;

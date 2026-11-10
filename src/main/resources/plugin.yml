@@ -3,6 +3,9 @@ version: 1.0
 main: me.speednt.RhymixPlugin
 api-version: '26.1.2'
 
+depend:
+  - TotalFreedomMod
+
 commands:
   rhymix:
     description: Rhymix NPC command

@@ -27,6 +27,14 @@
             <version>26.1.2.build.74-stable</version>
             <scope>provided</scope>
         </dependency>
+
+        <dependency>
+            <groupId>me.totalfreedom</groupId>
+            <artifactId>totalfreedommod</artifactId>
+            <version>local</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/TotalFreedomMod-7.0.0.jar</systemPath>
+        </dependency>
     </dependencies>
 
     <build>

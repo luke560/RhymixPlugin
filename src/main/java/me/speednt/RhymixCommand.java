@@ -79,6 +79,13 @@ public class RhymixCommand implements CommandExecutor, TabCompleter {
                 RhymixNPC.chat();
 
                 break;
+            case "ally":
+                if (RhymixAllyManager.getAlly() != null) {
+                    player.sendMessage(ChatColor.GREEN + "Current Rhymix Ally: " + ChatColor.AQUA + RhymixAllyManager.getAlly().getName());
+                } else {
+                    player.sendMessage(ChatColor.RED + "Rhymix has no allies...");
+                }
+                break;
 
             default:
                 help(player);
@@ -95,6 +102,7 @@ public class RhymixCommand implements CommandExecutor, TabCompleter {
         player.sendMessage(ChatColor.YELLOW + "/rhymix remove");
         player.sendMessage(ChatColor.YELLOW + "/rhymix tp");
         player.sendMessage(ChatColor.YELLOW + "/rhymix chat");
+        player.sendMessage(ChatColor.YELLOW + "/rhymix ally");
     }
 
     @Override
@@ -111,6 +119,7 @@ public class RhymixCommand implements CommandExecutor, TabCompleter {
             list.add("remove");
             list.add("tp");
             list.add("chat");
+            list.add("ally");
         }
 
         return list;
